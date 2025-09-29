@@ -13,6 +13,9 @@ User = get_user_model()
 
 
 class UserSerializer(DjoserUserSerializer):
+    """
+    User serializer .
+    """
 
     class Meta:
         model = User
@@ -24,7 +27,9 @@ class UserSerializer(DjoserUserSerializer):
 
 
 class UserCreateSerializer(UserCreateSerializer):
-
+    """
+    Serializer for user registration.
+    """
     class Meta:
         model = User
         fields = (
@@ -37,21 +42,27 @@ class UserCreateSerializer(UserCreateSerializer):
 
 
 class TagSerializer(serializers.ModelSerializer):
-
+    """
+    Serializer for Tag model.
+    """
     class Meta:
         model = Tag
         fields = ('id', 'name', 'slug')
 
 
 class IngredientSerializer(serializers.ModelSerializer):
-
+    """
+    Serializer for Ingredient model.
+    """
     class Meta:
         model = Ingredient
         fields = ('id', 'name', 'measurement_unit')
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
-
+    """
+    Serializer for ingredients in recipes (read operations).
+    """
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(source='ingredient.measurement_unit')
@@ -62,7 +73,9 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
-
+    """
+    Serializer for adding ingredients to recipes (write operations).
+    """
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all(),
         source='ingredient'
@@ -74,7 +87,9 @@ class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
 
 
 class RecipeListSerializer(serializers.ModelSerializer):
-
+    """
+    Serializer for Recipe list/detail view.
+    """
     tags = TagSerializer(many=True, read_only=True)
     author = UserSerializer(read_only=True)
     ingredients = RecipeIngredientSerializer(
@@ -94,6 +109,7 @@ class RecipeListSerializer(serializers.ModelSerializer):
         )
 
     def get_is_favorited(self, obj):
+        """Check if recipe is in user's favorites."""
         request = self.context.get('request')
         if request and request.user.is_authenticated:
             return Favorite.objects.filter(
@@ -104,7 +120,9 @@ class RecipeListSerializer(serializers.ModelSerializer):
 
 
 class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
-
+    """
+    Serializer for creating and updating recipes.
+    """
     ingredients = RecipeIngredientCreateSerializer(many=True, allow_empty=False)
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
@@ -125,6 +143,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         }
 
     def validate_ingredients(self, value):
+        """Validate ingredients field."""
         if not value:
             raise serializers.ValidationError(
                 'This field is required and cannot be empty.'
@@ -141,6 +160,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         return value
 
     def validate_tags(self, value):
+        """Validate tags field."""
         if not value:
             raise serializers.ValidationError(
                 'This field is required and cannot be empty.'
@@ -153,7 +173,8 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, data):
-        if not self.instance:  
+        """Validate entire recipe data."""
+        if not self.instance:  # Create operation
             required_fields = ['ingredients', 'tags', 'name', 'text', 'cooking_time', 'image']
             for field in required_fields:
                 if field not in data:
@@ -181,6 +202,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         ])
 
     def create(self, validated_data):
+        """Create recipe with ingredients and tags."""
         ingredients_data = validated_data.pop('ingredients')
         tags_data = validated_data.pop('tags')
         
@@ -191,6 +213,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
+        """Update recipe with ingredients and tags."""
         ingredients_data = validated_data.pop('ingredients', None)
         tags_data = validated_data.pop('tags', None)
         
@@ -208,6 +231,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         return instance
 
     def to_representation(self, instance):
+        """Return the list serializer representation after create/update."""
         return RecipeListSerializer(
             instance,
             context=self.context
@@ -215,14 +239,18 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
 
 
 class RecipeMinifiedSerializer(serializers.ModelSerializer):
-
+    """
+    recipe serializer for favorites.
+    """
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
-
+    """
+    Serializer for adding recipes to favorites.
+    """
     class Meta:
         model = Favorite
         fields = ('user', 'recipe')
@@ -235,7 +263,12 @@ class FavoriteSerializer(serializers.ModelSerializer):
         ]
 
     def to_representation(self, instance):
+        """Return minified recipe representation."""
         return RecipeMinifiedSerializer(
             instance.recipe,
             context=self.context
         ).data
+
+
+
+

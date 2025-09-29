@@ -5,7 +5,9 @@ from django.db.models import UniqueConstraint
 
 
 class User(AbstractUser):
-
+    """
+    User model with additional fields.
+    """
     email = models.EmailField(
         max_length=254,
         unique=True,
@@ -103,7 +105,9 @@ class Ingredient(models.Model):
 
 
 class Recipe(models.Model):
-
+    """
+    Recipe model for storing food recipes.
+    """
     author = models.ForeignKey(
         'User',  
         on_delete=models.CASCADE,
@@ -159,7 +163,9 @@ class Recipe(models.Model):
 
 
 class RecipeIngredient(models.Model):
-
+    """
+    Intermediate model for Recipe-Ingredient relationship with amount.
+    """
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
@@ -193,7 +199,9 @@ class RecipeIngredient(models.Model):
 
 
 class Favorite(models.Model):
-
+    """
+    Model for tracking user's favorite recipes.
+    """
     user = models.ForeignKey(
         'User',  
         on_delete=models.CASCADE,
