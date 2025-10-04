@@ -1,0 +1,41 @@
+
+@font-face {
+  src: url('./SF-Pro-Display-Regular.otf') format('otf'),
+    url('./SF-Pro-Display-Regular.woff2') format('woff2');
+  font-family: 'SF Pro Display';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+
+@font-face {
+  src: url('./SF-Pro-Display-Medium.otf') format('otf'),
+    url('./SF-Pro-Display-Medium.woff2') format('woff2');
+  font-family: 'SF Pro Display';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+
+@font-face {
+  src: url('./SF-Pro-Display-Semibold.otf') format('otf'),
+    url('./SF-Pro-Display-Semibold.woff2') format('woff2');
+  font-family: 'SF Pro Display';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+
+@font-face {
+  src: url('./SF-Pro-Display-Bold.otf') format('otf'),
+    url('./SF-Pro-Display-Bold.woff2') format('woff2');
+  font-family: 'SF Pro Display';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+

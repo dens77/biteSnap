@@ -1,0 +1,67 @@
+.button {
+  font-family: "SF Pro Display", sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 18px;
+  background: none;
+  border-radius: 10px;
+  padding: 0px 24px;
+  height: 44px;
+  text-decoration: none;
+  border: 1.4px solid transparent;
+  transition: background 0.2s;
+  outline: none;
+  user-select: none;
+  line-height: 44px;
+  cursor: pointer;
+  width: max-content;
+  box-sizing: border-box;
+}
+
+.button:active {
+  box-shadow: 0 0 7px #E2E8F0;
+}
+
+.button_style_light {
+  border: 1.4px solid #FF8A50;
+  background: #FFFFFF;
+  color: #FF8A50;
+}
+
+.button_style_light:hover {
+  background: #FF8A50;
+  color: #FFFFFF;
+  border: 1.4px solid transparent;
+}
+
+.button_style_dark {
+  background: #FF8A50;
+  color: #FFFFFF;
+}
+
+.button_style_dark:hover {
+  background: #FF6B35;
+  color: #FFFFFF;
+  border: 1.4px solid transparent;
+}
+
+.button_disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button_style_none {
+  padding: 0;
+}
+
+.button_style_none:active {
+  box-shadow: none;
+}
+
+@media screen and (max-width: 730px) {
+  .button {
+    height: 40px;
+    line-height: 40px;
+    font-size: 16px;
+  }
+}
