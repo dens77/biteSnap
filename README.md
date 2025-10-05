@@ -21,14 +21,16 @@ cd bitesnap
 
 **2. Backend setup:**
 ```bash
+python3 -m venv venv
+source venv/bin/activate  # Windows: ..\venv\Scripts\activate
 cd backend
-source ../venv/bin/activate  # Windows: ..\venv\Scripts\activate
 pip install -r requirements.txt
                                 #if database file is available, skip the next 4 steps
 python manage.py makemigrations
 python manage.py migrate
 python manage.py load_ingredients
 python manage.py create_test_data
+
 python manage.py runserver
 ```
 
@@ -43,8 +45,8 @@ npm start
 - Backend API: http://localhost:8000
 
 ### Test Login
-- Email: `johndoe@example.com`
-- Password: `password123`
+- Email: `test1@bitesnap.com`
+- Password: `testpass123`
 
 ## Usage
 
