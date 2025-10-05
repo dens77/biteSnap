@@ -6,19 +6,25 @@ export function useRecipeDetails() {
   const [recipeData, setRecipeData] = useState({});
 
   const toggleRecipeFavorite = async ({ id, toLike = 1 }) => {
-    const favoriteAction = toLike ? api.addToFavorites : api.removeFromFavorites;
+    // Convert toLike to boolean for consistent API logic
+    const shouldLike = Boolean(toLike);
+    const favoriteAction = shouldLike ? api.addToFavorites : api.removeFromFavorites;
     
     try {
       await favoriteAction({ id });
       const updatedRecipe = { 
         ...recipeData, 
-        is_favorited: Number(toLike) 
+        is_favorited: shouldLike
       };
       setRecipeData(updatedRecipe);
     } catch (error) {
-      const { errors } = error;
-      if (errors) {
-        alert(errors);
+      console.error('Favorites error (single recipe):', error);
+      // Handle different error types
+      if (error && typeof error === 'object') {
+        const errorMessage = error.error || error.message || JSON.stringify(error);
+        alert(`Favorites error: ${errorMessage}`);
+      } else {
+        alert('Failed to update favorites. Please check console for details.');
       }
     }
   };
@@ -43,21 +49,27 @@ export function useRecipeCollection() {
   } = categoryManagement;
 
   const toggleCollectionItemFavorite = async ({ id, toLike = true }) => {
-    const favoriteAction = toLike ? api.addToFavorites : api.removeFromFavorites;
+    // Convert toLike to boolean for consistent API logic  
+    const shouldLike = Boolean(toLike);
+    const favoriteAction = shouldLike ? api.addToFavorites : api.removeFromFavorites;
     
     try {
       await favoriteAction({ id });
       const updatedRecipeList = recipeList.map(recipeItem => {
         if (recipeItem.id === id) {
-          return { ...recipeItem, is_favorited: toLike };
+          return { ...recipeItem, is_favorited: shouldLike };
         }
         return recipeItem;
       });
       setRecipeList(updatedRecipeList);
     } catch (error) {
-      const { errors } = error;
-      if (errors) {
-        alert(errors);
+      console.error('Favorites error (recipe collection):', error);
+      // Handle different error types
+      if (error && typeof error === 'object') {
+        const errorMessage = error.error || error.message || JSON.stringify(error);
+        alert(`Favorites error: ${errorMessage}`);
+      } else {
+        alert('Failed to update favorites. Please check console for details.');
       }
     }
   };

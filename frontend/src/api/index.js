@@ -4,13 +4,15 @@ class Api {
     this._headers = headers;
   }
 
-  checkResponse(res) {
+  checkResponse = (res) => {
     return new Promise((resolve, reject) => {
       if (res.status === 204) {
         return resolve(res);
       }
       const func = res.status < 400 ? resolve : reject;
-      res.json().then((data) => func(data));
+      res.json()
+        .then((data) => func(data))
+        .catch(() => func(res)); // If JSON parsing fails, return the response object
     });
   }
 
@@ -176,7 +178,7 @@ class Api {
     }).then(this.checkResponse);
   }
 
-  addToFavorites({ id }) {
+  addToFavorites = ({ id }) => {
     const token = localStorage.getItem("token");
     return fetch(`/api/recipes/${id}/favorite/`, {
       method: "POST",
@@ -187,7 +189,7 @@ class Api {
     }).then(this.checkResponse);
   }
 
-  removeFromFavorites({ id }) {
+  removeFromFavorites = ({ id }) => {
     const token = localStorage.getItem("token");
     return fetch(`/api/recipes/${id}/favorite/`, {
       method: "DELETE",
