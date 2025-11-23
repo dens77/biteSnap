@@ -17,7 +17,7 @@ class Api {
   }
 
   signin({ email, password }) {
-    return fetch("/api/auth/token/login/", {
+    return fetch(`${this._url}/api/auth/token/login/`, {
       method: "POST",
       headers: this._headers,
       body: JSON.stringify({
@@ -29,7 +29,7 @@ class Api {
 
   signout() {
     const token = localStorage.getItem("token");
-    return fetch("/api/auth/token/logout/", {
+    return fetch(`${this._url}/api/auth/token/logout/`, {
       method: "POST",
       headers: {
         ...this._headers,
@@ -39,7 +39,7 @@ class Api {
   }
 
   signup({ email, password, username, first_name, last_name }) {
-    return fetch(`/api/users/`, {
+    return fetch(`${this._url}/api/users/`, {
       method: "POST",
       headers: this._headers,
       body: JSON.stringify({
@@ -54,7 +54,7 @@ class Api {
 
   getUserData() {
     const token = localStorage.getItem("token");
-    return fetch(`/api/users/me/`, {
+    return fetch(`${this._url}/api/users/me/`, {
       method: "GET",
       headers: {
         ...this._headers,
@@ -65,7 +65,7 @@ class Api {
 
   changePassword({ current_password, new_password }) {
     const token = localStorage.getItem("token");
-    return fetch(`/api/users/set_password/`, {
+    return fetch(`${this._url}/api/users/set_password/`, {
       method: "POST",
       headers: {
         ...this._headers,
@@ -76,7 +76,7 @@ class Api {
   }
 
   resetPassword({ email }) {
-    return fetch(`/api/users/reset_password/`, {
+    return fetch(`${this._url}/api/users/reset_password/`, {
       method: "POST",
       headers: {
         ...this._headers,
@@ -103,7 +103,7 @@ class Api {
           .join("")
       : "";
     return fetch(
-      `/api/recipes/?page=${page}&limit=${limit}${
+      `${this._url}/api/recipes/?page=${page}&limit=${limit}${
         author ? `&author=${author}` : ""
       }${is_favorited ? `&is_favorited=${is_favorited}` : ""}${tagsString}`,
       {
@@ -119,7 +119,7 @@ class Api {
   getRecipe({ recipe_id }) {
     const token = localStorage.getItem("token");
     const authorization = token ? { authorization: `Token ${token}` } : {};
-    return fetch(`/api/recipes/${recipe_id}/`, {
+    return fetch(`${this._url}/api/recipes/${recipe_id}/`, {
       method: "GET",
       headers: {
         ...this._headers,
@@ -137,7 +137,7 @@ class Api {
     ingredients = [],
   }) {
     const token = localStorage.getItem("token");
-    return fetch("/api/recipes/", {
+    return fetch(`${this._url}/api/recipes/`, {
       method: "POST",
       headers: {
         ...this._headers,
@@ -160,7 +160,7 @@ class Api {
   ) {
     // image was changed
     const token = localStorage.getItem("token");
-    return fetch(`/api/recipes/${recipe_id}/`, {
+    return fetch(`${this._url}/api/recipes/${recipe_id}/`, {
       method: "PATCH",
       headers: {
         ...this._headers,
@@ -180,7 +180,7 @@ class Api {
 
   addToFavorites = ({ id }) => {
     const token = localStorage.getItem("token");
-    return fetch(`/api/recipes/${id}/favorite/`, {
+    return fetch(`${this._url}/api/recipes/${id}/favorite/`, {
       method: "POST",
       headers: {
         ...this._headers,
@@ -191,7 +191,7 @@ class Api {
 
   removeFromFavorites = ({ id }) => {
     const token = localStorage.getItem("token");
-    return fetch(`/api/recipes/${id}/favorite/`, {
+    return fetch(`${this._url}/api/recipes/${id}/favorite/`, {
       method: "DELETE",
       headers: {
         ...this._headers,
@@ -203,7 +203,7 @@ class Api {
   // ingredients
   getIngredients({ name }) {
     const token = localStorage.getItem("token");
-    return fetch(`/api/ingredients/?name=${name}`, {
+    return fetch(`${this._url}/api/ingredients/?name=${name}`, {
       method: "GET",
       headers: {
         ...this._headers,
@@ -213,7 +213,7 @@ class Api {
 
   // tags
   getTags() {
-    return fetch(`/api/tags/`, {
+    return fetch(`${this._url}/api/tags/`, {
       method: "GET",
       headers: {
         ...this._headers,
@@ -223,7 +223,7 @@ class Api {
 
   deleteRecipe({ recipe_id }) {
     const token = localStorage.getItem("token");
-    return fetch(`/api/recipes/${recipe_id}/`, {
+    return fetch(`${this._url}/api/recipes/${recipe_id}/`, {
       method: "DELETE",
       headers: {
         ...this._headers,
