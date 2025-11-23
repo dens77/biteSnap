@@ -27,12 +27,9 @@ COPY . .
 # Create directory for static files
 RUN mkdir -p /app/static
 
-# Collect static files (will run during build)
-RUN python manage.py collectstatic --noinput || true
-
 # Expose port
 EXPOSE 8000
 
-# Run gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "--timeout", "120", "bitesnap.wsgi:application"]
+# Run migrations and start server (inline)
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py collectstatic --noinput && (python manage.py load_ingredients || true) && (python manage.py create_test_data || true) && exec gunicorn --bind 0.0.0.0:8000 --workers 2 --timeout 120 bitesnap.wsgi:application"]
 

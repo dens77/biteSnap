@@ -40,9 +40,7 @@ services:
       DEBUG: "True"
       SECRET_KEY: "dev-secret-key-change-in-production"
       ALLOWED_HOSTS: "localhost,127.0.0.1,backend"
-      # Azure Storage (optional - comment out to use local storage)
-      # AZURE_STORAGE_ACCOUNT_NAME: ${AZURE_STORAGE_ACCOUNT_NAME}
-      # AZURE_STORAGE_ACCOUNT_KEY: ${AZURE_STORAGE_ACCOUNT_KEY}
+
     ports:
       - "8000:8000"
     volumes:
