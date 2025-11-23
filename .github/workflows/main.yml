@@ -118,6 +118,8 @@ jobs:
           resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP }}
           containerAppEnvironment: bitesnap-env
           imageToDeploy: ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }}
+          acrUsername: ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }}
+          acrPassword: ${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }}
           targetPort: 8000
           ingress: external
           environmentVariables: |
@@ -139,6 +141,8 @@ jobs:
           resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP }}
           containerAppEnvironment: bitesnap-env
           imageToDeploy: ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }}
+          acrUsername: ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }}
+          acrPassword: ${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }}
           targetPort: 80
           ingress: external
 
