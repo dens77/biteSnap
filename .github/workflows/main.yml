@@ -148,7 +148,7 @@ jobs:
 
       - name: Deployment summary
         run: |
-          echo "🚀 Deployment completed successfully!"
+          echo "Deployment completed successfully!"
           echo ""
           echo "Backend: https://bitesnap-backend.${{ secrets.AZURE_CONTAINER_APPS_ENVIRONMENT_DOMAIN }}"
           echo "Frontend: https://bitesnap-frontend.${{ secrets.AZURE_CONTAINER_APPS_ENVIRONMENT_DOMAIN }}"
