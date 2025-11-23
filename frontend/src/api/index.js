@@ -234,6 +234,6 @@ class Api {
 
 }
 
-export default new Api(process.env.API_URL || "http://localhost", {
+export default new Api(process.env.API_URL || "https://bitesnap-backend.salmonwave-3869e9d3.westeurope.azurecontainerapps.io", {
   "content-type": "application/json",
 });
