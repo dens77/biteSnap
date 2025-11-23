@@ -109,7 +109,7 @@ class Recipe(models.Model):
     Recipe model for storing food recipes.
     """
     author = models.ForeignKey(
-        'User',  
+        'User',
         on_delete=models.CASCADE,
         related_name='recipes',
         verbose_name='Recipe Author'
@@ -203,7 +203,7 @@ class Favorite(models.Model):
     Model for tracking user's favorite recipes.
     """
     user = models.ForeignKey(
-        'User',  
+        'User',
         on_delete=models.CASCADE,
         related_name='favorites',
         verbose_name='User'
@@ -232,4 +232,3 @@ class Favorite(models.Model):
 
     def __str__(self):
         return f'{self.user.username} - {self.recipe.name}'
-

@@ -5,7 +5,7 @@ from djoser.serializers import UserCreateSerializer, UserSerializer as DjoserUse
 from drf_extra_fields.fields import Base64ImageField
 
 from recipes.models import (
-    Tag, Ingredient, Recipe, RecipeIngredient, 
+    Tag, Ingredient, Recipe, RecipeIngredient,
     Favorite
 )
 
@@ -20,10 +20,9 @@ class UserSerializer(DjoserUserSerializer):
     class Meta:
         model = User
         fields = (
-            'email', 'id', 'username', 'first_name', 
+            'email', 'id', 'username', 'first_name',
             'last_name'
         )
-
 
 
 class UserCreateSerializer(UserCreateSerializer):
@@ -33,7 +32,7 @@ class UserCreateSerializer(UserCreateSerializer):
     class Meta:
         model = User
         fields = (
-            'email', 'id', 'username', 'first_name', 
+            'email', 'id', 'username', 'first_name',
             'last_name', 'password'
         )
         extra_kwargs = {
@@ -93,8 +92,8 @@ class RecipeListSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     author = UserSerializer(read_only=True)
     ingredients = RecipeIngredientSerializer(
-        source='recipe_ingredients', 
-        many=True, 
+        source='recipe_ingredients',
+        many=True,
         read_only=True
     )
     is_favorited = serializers.SerializerMethodField()
@@ -103,8 +102,8 @@ class RecipeListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'id', 'tags', 'author', 'ingredients', 
-            'is_favorited', 
+            'id', 'tags', 'author', 'ingredients',
+            'is_favorited',
             'name', 'image', 'text', 'cooking_time'
         )
 
@@ -116,7 +115,6 @@ class RecipeListSerializer(serializers.ModelSerializer):
                 user=request.user, recipe=obj
             ).exists()
         return False
-
 
 
 class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
@@ -134,7 +132,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'id', 'ingredients', 'tags', 'image', 
+            'id', 'ingredients', 'tags', 'image',
             'name', 'text', 'cooking_time'
         )
         extra_kwargs = {
@@ -148,7 +146,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'This field is required and cannot be empty.'
             )
-        
+
         ingredients = []
         for item in value:
             ingredient = item['ingredient']
@@ -165,7 +163,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'This field is required and cannot be empty.'
             )
-        
+
         if len(value) != len(set(value)):
             raise serializers.ValidationError(
                 'Tags cannot be duplicated.'
@@ -188,7 +186,7 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
                     raise serializers.ValidationError({
                         field: ['This field is required.']
                     })
-        
+
         return data
 
     def create_ingredients(self, ingredients_data, recipe):
@@ -205,29 +203,29 @@ class RecipeCreateUpdateSerializer(serializers.ModelSerializer):
         """Create recipe with ingredients and tags."""
         ingredients_data = validated_data.pop('ingredients')
         tags_data = validated_data.pop('tags')
-        
+
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags_data)
         self.create_ingredients(ingredients_data, recipe)
-        
+
         return recipe
 
     def update(self, instance, validated_data):
         """Update recipe with ingredients and tags."""
         ingredients_data = validated_data.pop('ingredients', None)
         tags_data = validated_data.pop('tags', None)
-        
+
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         instance.save()
-        
+
         if tags_data is not None:
             instance.tags.set(tags_data)
-        
+
         if ingredients_data is not None:
             instance.recipe_ingredients.all().delete()
             self.create_ingredients(ingredients_data, instance)
-        
+
         return instance
 
     def to_representation(self, instance):
@@ -268,7 +266,3 @@ class FavoriteSerializer(serializers.ModelSerializer):
             instance.recipe,
             context=self.context
         ).data
-
-
-
-

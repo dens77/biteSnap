@@ -7,13 +7,13 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from djoser.views import UserViewSet as DjoserUserViewSet
 
 from recipes.models import (
-    Tag, Ingredient, Recipe, RecipeIngredient,
+    Tag, Ingredient, Recipe,
     Favorite
 )
 from api.serializers import (
     UserSerializer,
     TagSerializer, IngredientSerializer,
-    RecipeListSerializer, RecipeCreateUpdateSerializer, RecipeMinifiedSerializer,
+    RecipeListSerializer, RecipeCreateUpdateSerializer,
     FavoriteSerializer
 )
 from api.filters import RecipeFilter, IngredientFilter
@@ -27,11 +27,12 @@ class UserViewSet(DjoserUserViewSet):
     """
     ViewSet for user operations
     """
+
     def list(self, request):
         return Response({'detail': 'User listing disabled.'}, status=status.HTTP_404_NOT_FOUND)
-    
+
     def retrieve(self, request, pk=None):
-        return Response({'detail': 'User profiles disabled.'}, status=status.HTTP_404_NOT_FOUND)  
+        return Response({'detail': 'User profiles disabled.'}, status=status.HTTP_404_NOT_FOUND)
 
     @action(
         detail=False,
@@ -42,8 +43,6 @@ class UserViewSet(DjoserUserViewSet):
         """Get current user."""
         serializer = UserSerializer(request.user, context={'request': request})
         return Response(serializer.data)
-
-
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -102,7 +101,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        
+
         # DELETE method
         favorite = Favorite.objects.filter(user=user, recipe=recipe)
         if not favorite.exists():

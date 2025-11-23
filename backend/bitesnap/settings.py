@@ -229,7 +229,7 @@ APPLICATIONINSIGHTS_CONNECTION_STRING = os.environ.get('APPLICATIONINSIGHTS_CONN
 if APPLICATIONINSIGHTS_CONNECTION_STRING:
     # Application Insights will be configured in Azure Container Apps environment
     MIDDLEWARE.append('opencensus.ext.django.middleware.OpencensusMiddleware')
-    
+
     OPENCENSUS = {
         'TRACE': {
             'SAMPLER': 'opencensus.trace.samplers.ProbabilitySampler(rate=1.0)',

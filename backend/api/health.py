@@ -13,11 +13,11 @@ logger = logging.getLogger(__name__)
 def health_check(request):
     """
     Health check endpoint that returns application status.
-    
+
     Returns:
         - HTTP 200: Application is healthy
         - HTTP 503: Application has issues
-    
+
     Used by:
         - Azure Container Apps health probes
         - Monitoring systems
@@ -26,7 +26,7 @@ def health_check(request):
     status = "healthy"
     status_code = 200
     checks = {}
-    
+
     # Check 1: Database connectivity
     try:
         with connection.cursor() as cursor:
@@ -39,7 +39,7 @@ def health_check(request):
         status = "unhealthy"
         status_code = 503
         logger.error(f"Database health check failed: {e}")
-    
+
     # Check 2: Storage configuration
     try:
         if hasattr(settings, 'AZURE_ACCOUNT_NAME') and settings.AZURE_ACCOUNT_NAME:
@@ -50,7 +50,7 @@ def health_check(request):
     except Exception as e:
         checks["storage"] = f"error: {str(e)}"
         logger.warning(f"Storage configuration check failed: {e}")
-    
+
     # Build response
     response_data = {
         "status": status,
@@ -59,12 +59,11 @@ def health_check(request):
         "application": "BiteSnap",
         "checks": checks
     }
-    
+
     # Log health check request
     if status == "healthy":
-        logger.info(f"Health check passed - all systems operational")
+        logger.info("Health check passed - all systems operational")
     else:
         logger.error(f"Health check failed - status: {status}, checks: {checks}")
-    
-    return JsonResponse(response_data, status=status_code)
 
+    return JsonResponse(response_data, status=status_code)

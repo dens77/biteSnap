@@ -22,7 +22,7 @@ class Command(BaseCommand):
         # Path to data directory
         data_dir = os.path.join(settings.BASE_DIR.parent, 'data')
         file_path = os.path.join(data_dir, 'ingredients.csv')
-        
+
         self.load_from_csv(file_path, clear_existing)
 
     def load_from_csv(self, file_path, clear_existing=False):
@@ -44,7 +44,7 @@ class Command(BaseCommand):
         # Collect all ingredients to create
         ingredients_to_create = []
         skipped_count = 0
-        
+
         # Get existing ingredient names to avoid duplicates (1 query instead of N)
         existing_names = set(
             Ingredient.objects.values_list('name', flat=True)
@@ -53,7 +53,7 @@ class Command(BaseCommand):
 
         with open(file_path, 'r', encoding='utf-8') as file:
             csv_reader = csv.reader(file)
-            
+
             for row_num, row in enumerate(csv_reader, 1):
                 if len(row) != 2:
                     self.stdout.write(
@@ -81,12 +81,12 @@ class Command(BaseCommand):
                 if name in existing_names:
                     skipped_count += 1
                     continue
-                
+
                 # Add to batch for bulk creation
                 ingredients_to_create.append(
                     Ingredient(name=name, measurement_unit=measurement_unit)
                 )
-                
+
                 # Progress indicator
                 if len(ingredients_to_create) % 100 == 0:
                     self.stdout.write(f'Processed {len(ingredients_to_create)} new ingredients...')
@@ -109,9 +109,8 @@ class Command(BaseCommand):
             self.stdout.write(
                 self.style.WARNING('No new ingredients to add')
             )
-        
+
         if skipped_count:
             self.stdout.write(
                 self.style.WARNING(f'Skipped {skipped_count} items (duplicates or invalid)')
             )
-
