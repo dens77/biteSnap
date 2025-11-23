@@ -4,7 +4,7 @@ from recipes.models import Recipe, Ingredient
 
 class IngredientFilter(filters.FilterSet):
     """
-    Filter for ingredients search
+    Filter for ingredients searchh
     """
     name = filters.CharFilter(
         field_name='name',
