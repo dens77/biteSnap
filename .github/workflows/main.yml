@@ -112,39 +112,64 @@ jobs:
           echo "Frontend image pushed: $IMAGE_TAG"
 
       - name: Deploy backend to Azure Container Apps
-        uses: azure/container-apps-deploy-action@v1
-        with:
-          containerAppName: bitesnap-backend
-          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP }}
-          containerAppEnvironment: bitesnap-env
-          imageToDeploy: ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }}
-          acrUsername: ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }}
-          acrPassword: ${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }}
-          targetPort: 8000
-          ingress: external
-          environmentVariables: |
-            POSTGRES_HOST=${{ secrets.POSTGRES_HOST }}
-            POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-            POSTGRES_PORT=5432
-            AZURE_STORAGE_ACCOUNT_NAME=${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }}
-            AZURE_STORAGE_ACCOUNT_KEY=${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }}
-            SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}
-            DEBUG=False
-            ALLOWED_HOSTS=${{ secrets.BACKEND_ALLOWED_HOSTS }}
+        run: |
+          az containerapp create \
+            --name bitesnap-backend \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+            --environment bitesnap-env \
+            --image ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }} \
+            --registry-server ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io \
+            --registry-username ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }} \
+            --registry-password ${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }} \
+            --target-port 8000 \
+            --ingress external \
+            --env-vars \
+              POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
+              POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
+              POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
+              POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
+              POSTGRES_PORT=5432 \
+              AZURE_STORAGE_ACCOUNT_NAME=${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} \
+              AZURE_STORAGE_ACCOUNT_KEY="${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }}" \
+              SECRET_KEY="${{ secrets.DJANGO_SECRET_KEY }}" \
+              DEBUG=False \
+              ALLOWED_HOSTS=${{ secrets.BACKEND_ALLOWED_HOSTS }} \
+            --cpu 0.5 \
+            --memory 1.0Gi \
+            || az containerapp update \
+              --name bitesnap-backend \
+              --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+              --image ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ env.BACKEND_IMAGE_NAME }}:${{ github.sha }} \
+              --set-env-vars \
+                POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
+                POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
+                POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
+                POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
+                POSTGRES_PORT=5432 \
+                AZURE_STORAGE_ACCOUNT_NAME=${{ secrets.AZURE_STORAGE_ACCOUNT_NAME }} \
+                AZURE_STORAGE_ACCOUNT_KEY="${{ secrets.AZURE_STORAGE_ACCOUNT_KEY }}" \
+                SECRET_KEY="${{ secrets.DJANGO_SECRET_KEY }}" \
+                DEBUG=False \
+                ALLOWED_HOSTS=${{ secrets.BACKEND_ALLOWED_HOSTS }}
 
       - name: Deploy frontend to Azure Container Apps
-        uses: azure/container-apps-deploy-action@v1
-        with:
-          containerAppName: bitesnap-frontend
-          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP }}
-          containerAppEnvironment: bitesnap-env
-          imageToDeploy: ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }}
-          acrUsername: ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }}
-          acrPassword: ${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }}
-          targetPort: 80
-          ingress: external
+        run: |
+          az containerapp create \
+            --name bitesnap-frontend \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+            --environment bitesnap-env \
+            --image ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }} \
+            --registry-server ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io \
+            --registry-username ${{ secrets.AZURE_CONTAINER_REGISTRY_USERNAME }} \
+            --registry-password ${{ secrets.AZURE_CONTAINER_REGISTRY_PASSWORD }} \
+            --target-port 80 \
+            --ingress external \
+            --cpu 0.25 \
+            --memory 0.5Gi \
+            || az containerapp update \
+              --name bitesnap-frontend \
+              --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+              --image ${{ secrets.AZURE_CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ env.FRONTEND_IMAGE_NAME }}:${{ github.sha }}
 
       - name: Deployment summary
         run: |
