@@ -26,7 +26,7 @@ class Command(BaseCommand):
         self.load_from_csv(file_path, clear_existing)
 
     def load_from_csv(self, file_path, clear_existing=False):
-        """Load ingredients from CSV file."""
+        """Load ingredients from CSV file using bulk operations for better performance."""
         if not os.path.exists(file_path):
             self.stdout.write(
                 self.style.ERROR(f'CSV file not found: {file_path}')
@@ -39,10 +39,17 @@ class Command(BaseCommand):
                 self.style.WARNING('Cleared existing ingredients')
             )
 
-        created_count = 0
-        skipped_count = 0
-
         self.stdout.write('Loading ingredients from CSV...')
+
+        # Collect all ingredients to create
+        ingredients_to_create = []
+        skipped_count = 0
+        
+        # Get existing ingredient names to avoid duplicates (1 query instead of N)
+        existing_names = set(
+            Ingredient.objects.values_list('name', flat=True)
+        )
+        self.stdout.write(f'Found {len(existing_names)} existing ingredients')
 
         with open(file_path, 'r', encoding='utf-8') as file:
             csv_reader = csv.reader(file)
@@ -70,26 +77,41 @@ class Command(BaseCommand):
                     skipped_count += 1
                     continue
 
-                # Create ingredient if it doesn't exist
-                ingredient, created = Ingredient.objects.get_or_create(
-                    name=name,
-                    measurement_unit=measurement_unit
-                )
-
-                if created:
-                    created_count += 1
-                    if created_count % 100 == 0:
-                        self.stdout.write(f'Loaded {created_count} ingredients...')
-                else:
+                # Skip if already exists
+                if name in existing_names:
                     skipped_count += 1
+                    continue
+                
+                # Add to batch for bulk creation
+                ingredients_to_create.append(
+                    Ingredient(name=name, measurement_unit=measurement_unit)
+                )
+                
+                # Progress indicator
+                if len(ingredients_to_create) % 100 == 0:
+                    self.stdout.write(f'Processed {len(ingredients_to_create)} new ingredients...')
 
-        self.stdout.write(
-            self.style.SUCCESS(
-                f'Successfully loaded {created_count} ingredients from CSV'
+        # Bulk create all at once (much faster with remote databases)
+        if ingredients_to_create:
+            self.stdout.write(f'Creating {len(ingredients_to_create)} ingredients in bulk...')
+            Ingredient.objects.bulk_create(
+                ingredients_to_create,
+                batch_size=500,  # Insert in batches of 500
+                ignore_conflicts=True  # Skip duplicates if any
             )
-        )
+            created_count = len(ingredients_to_create)
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f'Successfully loaded {created_count} ingredients from CSV'
+                )
+            )
+        else:
+            self.stdout.write(
+                self.style.WARNING('No new ingredients to add')
+            )
+        
         if skipped_count:
             self.stdout.write(
-                self.style.WARNING(f'Skipped {skipped_count} items')
+                self.style.WARNING(f'Skipped {skipped_count} items (duplicates or invalid)')
             )
 

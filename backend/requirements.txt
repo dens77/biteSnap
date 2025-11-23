@@ -27,3 +27,14 @@ typing_extensions==4.15.0
 urllib3==2.5.0
 drf-extra-fields==3.4.1
 
+# Azure Blob Storage for media files
+django-storages[azure]==1.14.4
+
+# Azure Application Insights for monitoring (optional)
+opencensus-ext-azure==1.1.13
+opencensus-ext-django==0.8.0
+opencensus-ext-logging==0.1.1
+
+# Code quality and linting
+flake8==7.0.0
+
