@@ -86,7 +86,7 @@ if os.environ.get('POSTGRES_HOST'):
             'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
             'PORT': os.environ.get('POSTGRES_PORT', '5432'),
             'OPTIONS': {
-                'sslmode': 'require',  # Required for Azure PostgreSQL
+                'sslmode': os.environ.get('POSTGRES_SSLMODE', 'require'),
             },
         }
     }
