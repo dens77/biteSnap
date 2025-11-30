@@ -4,7 +4,7 @@ from recipes.models import Recipe, Ingredient
 
 class IngredientFilter(filters.FilterSet):
     """
-    Filter for ingredients searchh
+    Filter for ingredients search.
     """
     name = filters.CharFilter(
         field_name='name',
@@ -18,7 +18,7 @@ class IngredientFilter(filters.FilterSet):
 
 class RecipeFilter(filters.FilterSet):
     """
-    Filter for recipes.
+    Filter for recipes by tags, author, and favorite status.
     """
     tags = filters.CharFilter(method='filter_tags')
     is_favorited = filters.BooleanFilter(method='filter_is_favorited')
@@ -28,15 +28,14 @@ class RecipeFilter(filters.FilterSet):
         fields = ['author', 'tags', 'is_favorited']
 
     def filter_tags(self, queryset, name, value):
-        """Filter recipes by tags."""
         tags = self.request.query_params.getlist('tags')
         if tags:
             return queryset.filter(tags__slug__in=tags).distinct()
         return queryset
 
     def filter_is_favorited(self, queryset, name, value):
-        """Filter recipes by favorite status."""
+
         user = self.request.user
         if user.is_authenticated and value:
-            return queryset.filter(favorited_by__user=user)
+            return queryset.filter(favorited_by__user=user).distinct()
         return queryset

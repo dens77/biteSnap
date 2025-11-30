@@ -44,7 +44,7 @@ const FavoriteRecipesPage = () => {
       const tagOptions = await api.getTags();
       const configuredTags = tagOptions.map(tagItem => ({ 
         ...tagItem, 
-        value: true 
+        value: false  // Tags start unselected - no filters applied initially
       }));
       applyTagFilters(configuredTags);
     } catch (error) {

@@ -12,10 +12,24 @@ env:
   FRONTEND_IMAGE_NAME: bitesnap-frontend
 
 jobs:
-  # CI Job - Runs on all pushes and PRs
   lint-and-test:
-    name: Code Quality Check
+    name: Code Quality & Tests
     runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: test_bitesnap
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     
     steps:
       - name: Checkout code
@@ -38,11 +52,35 @@ jobs:
           cd backend
           flake8 . --config=setup.cfg --count --show-source --statistics
 
-      - name: Lint summary
-        if: success()
-        run: echo "✅ Code quality check passed!"
+      - name: Run tests with coverage
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_DB: test_bitesnap
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_PORT: 5432
+          SECRET_KEY: key-for-ci-only
+          DEBUG: False
+          ALLOWED_HOSTS: localhost,127.0.0.1
+        run: |
+          cd backend
+          pytest tests/ --cov=api --cov=recipes --cov=bitesnap \
+            --cov-report=xml --cov-report=term-missing \
+            --cov-fail-under=70 \
+            -v
 
-  # Build Job - Builds Docker images
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v3
+        if: always()
+        with:
+          file: ./backend/coverage.xml
+          flags: backend
+          name: backend-coverage
+
+      - name: Test summary
+        if: success()
+        run: echo "✅ All tests passed with >70% coverage!"
+
   build-images:
     name: Build Docker Images
     runs-on: ubuntu-latest
@@ -66,7 +104,6 @@ jobs:
       - name: Build summary
         run: echo "✅ Docker images built successfully!"
 
-  # CD Job - Deploy to Azure (only on main branch)
   deploy-to-azure:
     name: Deploy to Azure Container Apps
     runs-on: ubuntu-latest

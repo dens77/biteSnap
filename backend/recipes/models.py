@@ -3,26 +3,42 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db.models import UniqueConstraint
 
+from recipes.constants import (
+    USER_EMAIL_MAX_LENGTH,
+    USER_FIRST_NAME_MAX_LENGTH,
+    USER_LAST_NAME_MAX_LENGTH,
+    TAG_NAME_MAX_LENGTH,
+    TAG_SLUG_MAX_LENGTH,
+    TAG_SLUG_REGEX,
+    TAG_SLUG_ERROR_MESSAGE,
+    INGREDIENT_NAME_MAX_LENGTH,
+    INGREDIENT_MEASUREMENT_UNIT_MAX_LENGTH,
+    RECIPE_NAME_MAX_LENGTH,
+    RECIPE_IMAGE_UPLOAD_PATH,
+    MIN_COOKING_TIME,
+    MIN_INGREDIENT_AMOUNT,
+)
+
 
 class User(AbstractUser):
     """
     User model with additional fields.
     """
     email = models.EmailField(
-        max_length=254,
+        max_length=USER_EMAIL_MAX_LENGTH,
         unique=True,
         verbose_name='Email Address',
-        help_text='Required. 254 characters or fewer. Must be unique.'
+        help_text=f'Required. {USER_EMAIL_MAX_LENGTH} characters or fewer. Must be unique.'
     )
     first_name = models.CharField(
-        max_length=150,
+        max_length=USER_FIRST_NAME_MAX_LENGTH,
         verbose_name='First Name',
-        help_text='Required. 150 characters or fewer.'
+        help_text=f'Required. {USER_FIRST_NAME_MAX_LENGTH} characters or fewer.'
     )
     last_name = models.CharField(
-        max_length=150,
+        max_length=USER_LAST_NAME_MAX_LENGTH,
         verbose_name='Last Name',
-        help_text='Required. 150 characters or fewer.'
+        help_text=f'Required. {USER_LAST_NAME_MAX_LENGTH} characters or fewer.'
     )
 
     USERNAME_FIELD = 'email'
@@ -47,18 +63,18 @@ class Tag(models.Model):
     Tag model for categorizing recipes.
     """
     name = models.CharField(
-        max_length=32,
+        max_length=TAG_NAME_MAX_LENGTH,
         unique=True,
         verbose_name='Tag Name',
         help_text='Unique tag name'
     )
     slug = models.SlugField(
-        max_length=32,
+        max_length=TAG_SLUG_MAX_LENGTH,
         unique=True,
         validators=[
             RegexValidator(
-                regex='^[-a-zA-Z0-9_]+$',
-                message='Slug can only contain letters, numbers, hyphens and underscores'
+                regex=TAG_SLUG_REGEX,
+                message=TAG_SLUG_ERROR_MESSAGE
             )
         ],
         verbose_name='Tag Slug',
@@ -79,12 +95,12 @@ class Ingredient(models.Model):
     Ingredient model for recipe ingredients.
     """
     name = models.CharField(
-        max_length=128,
+        max_length=INGREDIENT_NAME_MAX_LENGTH,
         verbose_name='Ingredient Name',
         help_text='Name of the ingredient'
     )
     measurement_unit = models.CharField(
-        max_length=64,
+        max_length=INGREDIENT_MEASUREMENT_UNIT_MAX_LENGTH,
         verbose_name='Measurement Unit',
         help_text='Unit of measurement (e.g., g, ml, pcs)'
     )
@@ -115,12 +131,12 @@ class Recipe(models.Model):
         verbose_name='Recipe Author'
     )
     name = models.CharField(
-        max_length=256,
+        max_length=RECIPE_NAME_MAX_LENGTH,
         verbose_name='Recipe Name',
         help_text='Name of the recipe'
     )
     image = models.ImageField(
-        upload_to='recipes/images/',
+        upload_to=RECIPE_IMAGE_UPLOAD_PATH,
         verbose_name='Recipe Image',
         help_text='Recipe photo'
     )
@@ -140,7 +156,7 @@ class Recipe(models.Model):
         verbose_name='Tags'
     )
     cooking_time = models.PositiveIntegerField(
-        validators=[MinValueValidator(1)],
+        validators=[MinValueValidator(MIN_COOKING_TIME)],
         verbose_name='Cooking Time',
         help_text='Cooking time in minutes'
     )
@@ -179,7 +195,7 @@ class RecipeIngredient(models.Model):
         verbose_name='Ingredient'
     )
     amount = models.PositiveIntegerField(
-        validators=[MinValueValidator(1)],
+        validators=[MinValueValidator(MIN_INGREDIENT_AMOUNT)],
         verbose_name='Amount',
         help_text='Amount of ingredient'
     )

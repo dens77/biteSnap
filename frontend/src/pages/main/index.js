@@ -39,7 +39,7 @@ const RecipeHomepage = () => {
       const availableTags = await api.getTags();
       const tagConfiguration = availableTags.map((tag) => ({ 
         ...tag, 
-        value: true 
+        value: false  // Tags start unselected - no filters applied initially
       }));
       updateTagSelection(tagConfiguration);
     } catch (error) {

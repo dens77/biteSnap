@@ -151,3 +151,11 @@ azure-config-*.txt
 .env.local
 .env.production
 .env.*.local
+
+# Testing and Coverage
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+.hypothesis/
+test-results/
