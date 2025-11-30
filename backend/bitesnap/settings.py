@@ -4,10 +4,8 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Load environment variables from .env file if it exists
 load_dotenv(BASE_DIR / '.env')
 
-# Environment-based configuration
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-xsdb#ci-#)0g$_n7m!kc74i=38&#%ipix3k8kal_cs7-*3dfag')
 
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
@@ -19,7 +17,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
-# Allow all Azure Container Apps subdomains (simplifies deployment)
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
@@ -34,8 +31,8 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'djoser',
     'django_filters',
-    'corsheaders',  # CORS headers
-    'storages',  # Django-storages for Azure Blob Storage
+    'corsheaders',
+    'storages',
     'recipes.apps.RecipesConfig',
     'api.apps.ApiConfig',
 ]
@@ -43,7 +40,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # CORS Middleware (must be before CommonMiddleware)
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -75,7 +72,6 @@ WSGI_APPLICATION = 'bitesnap.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# Use PostgreSQL in production (Azure), SQLite for local development
 if os.environ.get('POSTGRES_HOST'):
     DATABASES = {
         'default': {
@@ -137,8 +133,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'static'
 
-# Media files (User uploaded files)
-# Use Azure Blob Storage in production, local storage in development
+
 if os.environ.get('AZURE_STORAGE_ACCOUNT_NAME'):
     # Azure Blob Storage configuration
     DEFAULT_FILE_STORAGE = 'storages.backends.azure_storage.AzureStorage'
@@ -157,7 +152,6 @@ else:
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Custom User Model
 AUTH_USER_MODEL = 'recipes.User'
 
 # Django REST Framework Configuration
@@ -234,11 +228,9 @@ LOGGING = {
     },
 }
 
-# Azure Application Insights (for monitoring and metrics)
 APPLICATIONINSIGHTS_CONNECTION_STRING = os.environ.get('APPLICATIONINSIGHTS_CONNECTION_STRING', '')
 
 if APPLICATIONINSIGHTS_CONNECTION_STRING:
-    # Application Insights will be configured in Azure Container Apps environment
     MIDDLEWARE.append('opencensus.ext.django.middleware.OpencensusMiddleware')
 
     OPENCENSUS = {

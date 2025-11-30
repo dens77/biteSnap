@@ -2,51 +2,23 @@
 
 A clean and simple recipe management application built with React frontend and Django REST API backend.
 
+## 🌐 Live Application
+
+**Deployed on Azure Container Apps:**  
+** https://bitesnap-frontend.salmonwave-3869e9d3.westeurope.azurecontainerapps.io/**
+
+### Test Login Credentials
+- Email: `test1@bitesnap.com`
+- Password: `testpass123`
+
+---
+
 ## About
 
 BiteSnap allows users to create, edit, and manage their favorite recipes with a modern, responsive interface. Features include user authentication, recipe CRUD operations, favorites system, tag-based filtering, and smart ingredient search.
 
-**Technologies:** React 17, Django 4.2, Django REST Framework, SQLite
+**Technologies:** React 17, Django 4.2, Django REST Framework, PostgreSQL, Azure Container Apps, Azure blob storage
 
-## Quick Setup
-
-
-### Installation
-
-**1. Clone and navigate to project:**
-```bash
-git clone repo
-cd bitesnap
-```
-
-**2. Backend setup:**
-```bash
-python3 -m venv venv
-source venv/bin/activate  # Windows: ..\venv\Scripts\activate
-cd backend
-pip install -r requirements.txt
-                                #if database file is available, skip the next 4 steps
-python manage.py makemigrations
-python manage.py migrate
-python manage.py load_ingredients
-python manage.py create_test_data
-
-python manage.py runserver
-```
-
-**3. Frontend setup (new terminal):**
-```bash
-cd frontend
-npm start
-```
-
-**4. Access the application:**
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000
-
-### Test Login
-- Email: `test1@bitesnap.com`
-- Password: `testpass123`
 
 ## Usage
 
@@ -55,3 +27,21 @@ npm start
 - **Edit Recipe**: Click "Edit Recipe" on your own recipes
 - **Add to Favorites**: Click the icon to bookmark recipes
 - **Filter by Tags**: Use tag buttons to filter recipes by category
+
+---
+
+## Deployment Architecture
+
+**Production Stack:**
+- **Frontend**: Azure Container Apps (React + Nginx)
+- **Backend**: Azure Container Apps (Django + Gunicorn)
+- **Database**: Azure Database for PostgreSQL
+- **Storage**: Azure Blob Storage (recipe images)
+- **CI/CD**: GitHub Actions
+- **Monitoring**: Azure Application Insights, /health endpoint
+
+**Features:**
+- ✅ Automated deployments on push to main
+- ✅ Health monitoring and logging
+- ✅ 85% test coverage with automated testing
+- ✅ Containerized with Docker
